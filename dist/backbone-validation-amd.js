@@ -1,6 +1,6 @@
 // Backbone.Validation v0.11.5
 //
-// Copyright (c) 2011-2015 Thomas Pedersen
+// Copyright (c) 2011-2016 Thomas Pedersen
 // Distributed under MIT License
 //
 // Documentation and full license available at:
@@ -104,6 +104,25 @@
   
       return into;
     };
+  
+    // helps in retrieving values from object using string keys
+    // example: http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
+    var valueFromObjectUsingStringKey = function(obj, path, def) {
+  
+      var i = 0,
+          pathArray = path.split('.'),
+          len = pathArray.length;
+  
+      for(i; i < len; i++){
+        if(!obj || typeof obj !== 'object') return def;
+        obj = obj[pathArray[i]];
+      }
+  
+      if(obj === undefined) return def;
+        
+      return obj;
+  
+    };   
   
     // Validation
     // ----------
@@ -690,7 +709,7 @@
         // Validates that the value has to be equal to the value of the attribute
         // with the name specified
         equalTo: function(value, attr, equalTo, model, computed) {
-          if(value !== computed[equalTo]) {
+          if(value !== valueFromObjectUsingStringKey(computed, equalTo)) {
             return this.format(defaultMessages.equalTo, this.formatLabel(attr, model), this.formatLabel(equalTo, model));
           }
         },
